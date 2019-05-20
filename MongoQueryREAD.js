@@ -35,3 +35,34 @@ db.collection.find({ age: {$exists: true, $ne: null} }) // match documents where
 db.collection.find({ field_name: { $exists: true, $gte: 22 } }) // match documents where, Field field_name exists and field_name>=22.
 db.collection.find({ field_name: { $exists: false } }) // match documents where, Field field_name does not exists.
 db.collection.find({ field_name: { $type: ["double", "string"] } }) // match documents where, type of Field field_name is double or string. Ref: https://docs.mongodb.com/manual/reference/operator/query/type/#available-types
+
+
+// Evaluation Operators
+db.movies.find({ summary: { $regex: /musical/ } }) // match documents where, Field summary has the word musical.
+db.movies.find({ summary: { $regex: 'musical' } }) // match documents where, Field summary has the word musical.
+db.collection.find({ $expr: { $gt: ["$field_1", "$field_2"] } }) // match documents where, field_1 > field_2. Only in mongodb V3.6
+db.sales.find({
+    $expr: {
+        $gt: [ {
+            $cond: {
+                if: { $gt: ["$volume", 190] },
+                then: { $subtract: ["$volume", 30] },
+                else: "$volume"
+            }
+        },
+        "$target"]
+    }
+}) // https://docs.mongodb.com/manual/reference/operator/query/expr/#op._S_expr
+db.supplies.find( {
+    $expr: {
+       $lt:[ {
+          $cond: {
+             if: { $gte: ["$qty", 100] },
+             then: { $divide: ["$price", 2] },
+             else: { $divide: ["$price", 4] }
+           }
+       },
+       5 ] }
+} )
+
+
