@@ -52,7 +52,7 @@ db.sales.find({
         },
         "$target"]
     }
-}) // https://docs.mongodb.com/manual/reference/operator/query/expr/#op._S_expr
+}) // DBInsertCommand.js -> #3
 db.supplies.find( {
     $expr: {
        $lt:[ {
@@ -63,6 +63,9 @@ db.supplies.find( {
            }
        },
        5 ] }
-} )
+} ) // https://docs.mongodb.com/manual/reference/operator/query/expr/#op._S_expr
 
+
+// Array Operators
+db.users.find({ "hobbies.title": "coding" }) // DBInsertCommand.js -> #2
 
