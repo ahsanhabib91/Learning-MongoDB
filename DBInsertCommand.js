@@ -24,3 +24,48 @@ db.supplies.insertMany([
     { "_id" : 3, "item" : "pencil", "qty": 50 , "price": 6 },
     { "_id" : 4, "item" : "eraser", "qty": 150 , "price": 3 },
 ])
+
+// 5.
+db.users.insertOne( { name: "Chris", age: 27, hobbies: ['writing', 'cocking', 'hiking'], phone: "5645465465"})
+
+//6.
+db.inventory.insertMany([
+    {
+        _id: ObjectId("5234cc89687ea597eabee675"),
+        code: "xyz",
+        tags: [ "school", "book", "bag", "headphone", "appliance" ],
+        qty: [
+               { size: "S", num: 10, color: "blue" },
+               { size: "M", num: 45, color: "blue" },
+               { size: "L", num: 100, color: "green" }
+             ]
+     },
+     {
+        _id: ObjectId("5234cc8a687ea597eabee676"),
+        code: "abc",
+        tags: [ "appliance", "school", "book" ],
+        qty: [
+               { size: "6", num: 100, color: "green" },
+               { size: "6", num: 50, color: "blue" },
+               { size: "8", num: 100, color: "brown" }
+             ]
+     },
+     {
+        _id: ObjectId("5234ccb7687ea597eabee677"),
+        code: "efg",
+        tags: [ "school", "book" ],
+        qty: [
+               { size: "S", num: 10, color: "blue" },
+               { size: "M", num: 100, color: "blue" },
+               { size: "L", num: 100, color: "green" }
+             ]
+     },
+     {
+        _id: ObjectId("52350353b2eff1353b349de9"),
+        code: "ijk",
+        tags: [ "electronics", "school" ],
+        qty: [
+               { size: "M", num: 100, color: "green" }
+             ]
+     }
+])

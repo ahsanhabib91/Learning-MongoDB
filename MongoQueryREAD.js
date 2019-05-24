@@ -67,5 +67,7 @@ db.supplies.find( {
 
 
 // Array Operators
-db.users.find({ "hobbies.title": "coding" }) // DBInsertCommand.js -> #2
-
+db.users.find({ "hobbies.title": "coding" }) // DBInsertCommand.js -> #2 and #5
+db.users.find({hobbies: {$size: 3}}) // match documents where, array Field hobbies length size 3
+db.inventory.find( { tags: { $all: [ "appliance", "school", "book" ] } } ) // DBInsertCommand.js -> #4. match documents where, array_Field tags contains "appliance", "school", "book"
+db.inventory.find({ tags: ["appliance", "school", "book"]  }).pretty() // exact match
