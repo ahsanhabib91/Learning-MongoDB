@@ -71,3 +71,10 @@ db.users.find({ "hobbies.title": "coding" }) // DBInsertCommand.js -> #2 and #5
 db.users.find({hobbies: {$size: 3}}) // match documents where, array Field hobbies length size 3
 db.inventory.find( { tags: { $all: [ "appliance", "school", "book" ] } } ) // DBInsertCommand.js -> #4. match documents where, array_Field tags contains "appliance", "school", "book"
 db.inventory.find({ tags: ["appliance", "school", "book"]  }).pretty() // exact match
+db.scores.find({ results: { $elemMatch: { $gte: 80, $lt: 85 } } }) // DBInsertCommand.js -> #7
+db.survey.find({ results: { $elemMatch: { product: "xyz", score: { $gte: 8 } } } }) // DBInsertCommand.js -> #8 match documents where, the results array contains at least one element with both product equal to "xyz" and score greater than or equal to 8.
+db.users.find({ $and: [ {"hobbies.title": "writing"}, {"hobbies.frequency": {$gte: 7}} ] }).pretty() // DBInsertCommand.js -> #2 match documents where, any element of hobbies array contains title: "writing" and  any element of hobbies array contains frequency: >=8
+db.users.find({ hobbies: { $elemMatch: { title: "writing", frequency: {$gte: 8} } } }).pretty() // DBInsertCommand.js -> #2 match documents where, the hobbies array contains at least one element with both title === "writing" and frequency >= 8.
+/* Note the difference between $and and $elemMatch */
+
+

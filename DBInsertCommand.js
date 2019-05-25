@@ -8,9 +8,9 @@ db.users.insertMany([
 
 // 2.
 db.users.insertMany([
-    { name: "John", age: 22, hobbies: [{title: 'writing', frequency: 2}, {title: 'gaming', frequency: 1}], phone: "5645465465"}, 
-    { name: "Doe", hobbies: [{title: 'coding', frequency: 3}], phone: 123456789},
-    { name: "Pol", hobbies: [{title: 'writing', frequency: 4}, {title: 'coding', frequency: 5}], phone: "123456789"},
+    { name: "John", age: 22, hobbies: [{title: 'writing', frequency: 5}, {title: 'gaming', frequency: 10}], phone: "5645465465"}, 
+    { name: "Doe", hobbies: [{title: 'writing', frequency: 30}], phone: 123456789},
+    { name: "Pol", hobbies: [{title: 'coding', frequency: 4}, {title: 'gaming', frequency: 8}, {title: 'sports', frequency: 3}], phone: "123456789"},
     { name: "Anna", hobbies: [{title: 'sports', frequency: 6}, {title: 'coding', frequency: 3}, {title: 'gaming', frequency: 7}], phone: 123456789},
 ])
 
@@ -68,4 +68,14 @@ db.inventory.insertMany([
                { size: "M", num: 100, color: "green" }
              ]
      }
+])
+
+// 7.
+db.scores.insertMany([{ _id: 1, results: [ 82, 85, 88 ] }, { _id: 2, results: [ 75, 88, 89 ] }])
+
+// 8.
+db.survey.insertMany([
+  { _id: 1, results: [ { product: "abc", score: 10 }, { product: "xyz", score: 5 } ] },
+  { _id: 2, results: [ { product: "abc", score: 8 }, { product: "xyz", score: 7 } ] },
+  { _id: 3, results: [ { product: "abc", score: 7 }, { product: "xyz", score: 8 } ] }
 ])
