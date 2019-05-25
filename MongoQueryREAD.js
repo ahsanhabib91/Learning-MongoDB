@@ -78,3 +78,13 @@ db.users.find({ hobbies: { $elemMatch: { title: "writing", frequency: {$gte: 8} 
 /* Note the difference between $and and $elemMatch */
 
 
+
+// Projection
+db.movies.find({}, {_id: 0, name: 1, genres: 1 , runtime: 1, rating: 1}).pretty() // return all documents but only with fields name, genres, runtime, rating. Exclude others. _id is added. to exclude it, make it 0.
+db.movies.find({}, {"schedule.time": 1}).pretty() // 
+db.movies.find({ genres: "Action" }, {"genres.$": 1}).pretty() // 
+db.movies.find({ genres: { $all: ["Drama", "Horror"]} }, {"genres.$": 1}).pretty() // 
+db.movies.find({ genres: "Drama"}, { genres: { $elemMatch: { $eq: "Horror" } } }).pretty() // 
+db.movies.find({ "rating.average": { $gt: 9 }}, { genres: { $elemMatch: { $eq: "Horror" } } }).pretty() // 
+db.movies.find({ "rating.average": { $gt: 9 }}, { genres: { $slice: 2 }, name: 1 }).pretty() // 
+db.movies.find({ "rating.average": { $gt: 9 }}, { genres: { $slice: [1, 2] }, name: 1 }).pretty() // in $slice[1, 2] => 1 is the element item to skip. 2 is the data we want to limit
