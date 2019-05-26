@@ -6,6 +6,7 @@
 // Definition:  db.collection.updateMany(filter, update, options)
 
 
+// Fields
 db.users.updateOne({ _id: ObjectId("5cea197460ce58c093334976") }, 
 { 
     $set: { 
@@ -27,10 +28,13 @@ db.users.updateMany({ isSporty: true }, { $unset: { phone: "" } }) // drop field
 db.users.updateMany({}, { $rename: { age: "totalAge" } }) // rename the field: age to totalAge
 db.users.updateOne({ name: "Maria" }, { $set: { age: 29, hobbies: [{title: "Good Food", frequency: 3}], isSporty: false } }, { upsert: true }) // Find and update. If no data found then create
 
+
+// Array
 db.users.find({ $and: [{ "hobbies.title": "Sports"}, {"hobbies.frequency": { $gte: 3 }  }] }).pretty()
 db.users.find({ hobbies: { $elemMatch: { title: "Sports", frequency: {$gte:3} } } }).pretty()
-
-
+db.users.updateMany({ hobbies: { $elemMatch: { title: "Sports", frequency: {$gte:3} } } }, { $set: { "hobbies.$.highFrequency": true } }) // update documents inside the hobbies array.  
+db.users.updateMany({ "hobbies.frequency": {$gt:2} }, { $set: { "hobbies.$.goodFrequency": true } }) // only update the first matched document of the hobbies array. Lec-112.
+db.users.updateMany({age: {$gt: 30}}, { $inc: { "hobbies.$[].frequency": -1 } }) // update frequency of all documents inside array_field: hobbies
 
 
 
