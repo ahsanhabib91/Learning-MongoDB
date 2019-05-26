@@ -1,7 +1,9 @@
 // 07 Read Operations - A Closer Look
-// The queries are based on tv-shows.json
-
+// Some queries are based on tv-shows.json
 // Query Selectors: https://docs.mongodb.com/manual/reference/operator/query/#query-selectors
+
+// Definition:  db.collection.findOne(query, projection)
+// Definition:  db.collection.find(query, projection)
 
 
 // Comparison Operators
