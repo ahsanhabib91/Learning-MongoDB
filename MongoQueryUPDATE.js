@@ -3,6 +3,29 @@
 // Query Selectors: https://docs.mongodb.com/manual/reference/operator/update/
 
 // Definition:  db.collection.updateOne(filter, update, options)
+/**
+    db.collection.updateOne(
+        <filter>,
+        <update>,
+        {
+        upsert: <boolean>,
+        writeConcern: <document>,
+        collation: <document>,
+        arrayFilters: [ <filterdocument1>, ... ]
+        }
+    )
+    db.collection.updateMany(
+    <filter>,
+    <update>,
+    {
+        upsert: <boolean>,
+        writeConcern: <document>,
+        collation: <document>,
+        arrayFilters: [ <filterdocument1>, ... ]
+    }
+    )
+ */
+
 // Definition:  db.collection.updateMany(filter, update, options)
 
 
@@ -45,7 +68,45 @@ db.users.updateMany({age: {$gt: 30}}, { $inc: { "hobbies.$[].frequency": -1 } })
 db.users.updateMany(
     { "hobbies.frequency": {$gt:2} }, 
     { $set: {"hobbies.$[el].goodFrequency": true} },
-    { arrayFilters: [ { "el.frequency": { $gt:2 } } ] }) // // update frequency of all matched(matched with arrayFilters) documents of the hobbies array.
+    { arrayFilters: [ { "el.frequency": { $gt:2 } } ] }) // update frequency of all matched(matched with arrayFilters) documents of the hobbies array.
+db.users.updateOne(
+    {name: "Maria"}, 
+    {$push: 
+        { 
+            hobbies: {title: "Sports", frequency: 2} 
+        }
+    }, 
+    { upsert: true }
+) // push 1 document data to array_field: hobbies
+db.users.updateOne(
+    {name: "Maria"}, 
+    {$push: 
+        { 
+            hobbies: {
+                $each: [{title: "Hiking", frequency: 2}, {title: "Coding", frequency: 1}]
+            } 
+        }
+    }, 
+    { upsert: true }
+) // push multiple documents data to array_field: hobbies
+db.users.updateOne(
+    {name: "JOE"}, 
+    {$push: 
+        { 
+            hobbies: {
+                $each: [{title: "Coding", frequency: 2}, {title: "Walking", frequency: 3}, {title: "Hiking", frequency: 4}, {title: "Ignore", frequency: 000}],
+                $sort: { frequency: -1 },
+                $slice: 3
+            } 
+        }
+    }, 
+    { upsert: true }
+) // push multiple documents data to array_field: hobbies. $sort: desc-frequency. $slice: taking first 3 
+
+
+
+
+
 
 
 
