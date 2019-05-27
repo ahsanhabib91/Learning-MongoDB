@@ -32,11 +32,20 @@ db.users.updateOne({ name: "Maria" }, { $set: { age: 29, hobbies: [{title: "Good
 // Array
 db.users.find({ $and: [{ "hobbies.title": "Sports"}, {"hobbies.frequency": { $gte: 3 }  }] }).pretty()
 db.users.find({ hobbies: { $elemMatch: { title: "Sports", frequency: {$gte:3} } } }).pretty()
-db.users.updateMany({ hobbies: { $elemMatch: { title: "Sports", frequency: {$gte:3} } } }, { $set: { "hobbies.$.highFrequency": true } }) // update documents inside the hobbies array.  
+db.users.updateMany({ hobbies: { $elemMatch: { title: "Sports", frequency: {$gte:3} } } }, { $set: { "hobbies.$.highFrequency": true } }) // only update the first matched document of the hobbies array.
 db.users.updateMany({ "hobbies.frequency": {$gt:2} }, { $set: { "hobbies.$.goodFrequency": true } }) // only update the first matched document of the hobbies array. Lec-112.
 db.users.updateMany({age: {$gt: 30}}, { $inc: { "hobbies.$[].frequency": -1 } }) // update frequency of all documents inside array_field: hobbies
-
-
+/**
+    db.collection.updateMany(
+        { <query conditions> },
+        { <update operator>: { "<array>.$[<identifier>]" : value } },
+        { arrayFilters: [ { <identifier>: <condition> } ] }
+    )
+ */
+db.users.updateMany(
+    { "hobbies.frequency": {$gt:2} }, 
+    { $set: {"hobbies.$[el].goodFrequency": true} },
+    { arrayFilters: [ { "el.frequency": { $gt:2 } } ] }) // // update frequency of all matched(matched with arrayFilters) documents of the hobbies array.
 
 
 
