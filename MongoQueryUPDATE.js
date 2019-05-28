@@ -71,8 +71,8 @@ db.users.updateMany(
     { arrayFilters: [ { "el.frequency": { $gt:2 } } ] }) // update frequency of all matched(matched with arrayFilters) documents of the hobbies array.
 db.users.updateOne(
     {name: "Maria"}, 
-    {$push: 
-        { 
+    {
+        $push: { 
             hobbies: {title: "Sports", frequency: 2} 
         }
     }, 
@@ -80,8 +80,8 @@ db.users.updateOne(
 ) // push 1 document data to array_field: hobbies
 db.users.updateOne(
     {name: "Maria"}, 
-    {$push: 
-        { 
+    {
+        $push: { 
             hobbies: {
                 $each: [{title: "Hiking", frequency: 2}, {title: "Coding", frequency: 1}]
             } 
@@ -91,8 +91,8 @@ db.users.updateOne(
 ) // push multiple documents data to array_field: hobbies
 db.users.updateOne(
     {name: "JOE"}, 
-    {$push: 
-        { 
+    {
+        $push: { 
             hobbies: {
                 $each: [{title: "Coding", frequency: 2}, {title: "Walking", frequency: 3}, {title: "Hiking", frequency: 4}, {title: "Ignore", frequency: 000}],
                 $sort: { frequency: -1 },
@@ -102,9 +102,42 @@ db.users.updateOne(
     }, 
     { upsert: true }
 ) // push multiple documents data to array_field: hobbies. $sort: desc-frequency. $slice: taking first 3 
-
-
-
+db.users.updateOne(
+    {name: "JOE"},
+    {
+        $pull: { hobbies: { title: "Ignore" } } 
+    }
+) // removing elements of hobbies array wehre title === Ignore
+db.users.updateOne(
+    {name: "JOE"},
+    {
+        $pop: { hobbies: 1 }
+    }
+) // removing the last element of hobbies array
+db.users.updateOne(
+    {name: "JOE"},
+    {
+        $pop: { hobbies: -1 } 
+    }
+) // removing the first element of hobbies array
+db.users.updateOne(
+    {name: "Maria"}, 
+    {
+        $addToSet: { 
+            hobbies: {title: "Sports", frequency: 2} 
+        }
+    }
+) // push 1 document data to array_field: hobbies only if the document is unique in that array field
+db.users.updateOne(
+    {name: "Maria"}, 
+    {
+        $addToSet: { 
+            hobbies: {
+                $each: [{title: "Sports", frequency: 2}, {title: "Coding", frequency: 3}, {title: "Walking", frequency: 1}],
+            } 
+        }
+    }
+) // push documents data to array_field: hobbies. But only enters unique documents.
 
 
 
