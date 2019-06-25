@@ -41,11 +41,18 @@ db.solarSystem.aggregate([
     { // stage 3
         $sort: { numberOfMoons: -1 }
     },
+    { 
+        allowDiskUse: true // $sort operation with aggregation pipeline are limited to 100MB RAM by default. To handle large datasets, mention { allowDiskUse: true }
+    },
     { // stage 4
         $limit: 5
+    },
+    { // stage 5
+        $count: "numberOfMoons"
     }
 ]);
-
+// if $sort place early i.e. before $project, unwind in group stage, it can advantage of indxes. Otherwise the $sort will perform in-memory sort which will increase the memory consumption of the server.
+// $sort operation with aggregation pipeline are limited to 100MB RAM by default. To handle large datasets, mention { allowDiskUse: true }
 
 db.movies.find({ 
     "imdb.rating": { $gte: 7 },
@@ -94,11 +101,148 @@ db.movies.aggregate([ { $match: { title: "labors of love"} }, { $project: { _id:
 
 
 
+var favorites = [
+    "Sandra Bullock",
+    "Tom Hanks",
+    "Julia Roberts",
+    "Kevin Spacey",
+    "George Clooney"];
+    ["Sandra Bullock","Tom Hanks","Julia Roberts","Kevin Spacey","George Clooney"]
+db.movies.aggregate([
+    {
+        $match: {
+            "tomatoes.viewer.rating": { $gte: 3 }
+        }
+    },
+    {
+        $addFields: {
+            "num_favs": { $setIntersection: [ "$cast", ["Sandra Bullock","Tom Hanks","Julia Roberts","Kevin Spacey","George Clooney"] ] }
+        }
+    },
+    {
+        $match: {
+            num_favs: { $ne: null }
+        }
+    },
+    {
+        $project: {
+            _id: 0,
+            num_favs: 1,
+            num_favs_size: {$size: "$num_favs"},
+            rating: "$tomatoes.viewer.rating"
+        }
+    },
+    {
+        $match: {
+            num_favs_size: { $gt: 0 }
+        }
+    }
+]).itcount();
+
+
+// Answer of Chapter 2: Lab: Using Cursor-like Stages
+var favorites = [
+    "Sandra Bullock",
+    "Tom Hanks",
+    "Julia Roberts",
+    "Kevin Spacey",
+    "George Clooney"];
+    ["Sandra Bullock","Tom Hanks","Julia Roberts","Kevin Spacey","George Clooney"]
+db.movies.aggregate([
+    {
+        $match: {
+            "tomatoes.viewer.rating": { $gte: 3 },
+            cast: { $elemMatch: { $exists: true } },
+            countries: "USA",
+        }
+    },
+    {
+        $addFields: {
+            "num_favs": {$size: { $setIntersection: [ "$cast", favorites ] }}
+        }
+    },
+    {
+        $sort: { num_favs: -1, "tomatoes.viewer.rating": -1, title: -1 }
+    },
+    {
+        $project: {
+            title: 1
+        }
+    },
+    { $skip: 24 },
+    { $limit: 1 },
+], { allowDiskUse: true }).pretty();
 
 
 
+// Answer of Chapter 2: Lab - Bringing it all together
+db.movies.aggregate([
+    {
+        $match: {
+            languages: "English",
+            "imdb.rating": { $gte: 1 },
+            "imdb.votes": { $gte: 1 },
+            year: { $gte: 1990 }
+        }
+    },
+    {
+        $addFields: {
+            "scaled_votes": {
+                $add: [
+                  1,
+                  {
+                    $multiply: [
+                      9,
+                      {
+                        $divide: [
+                          { $subtract: ["$imdb.votes", 5] },
+                          { $subtract: [1521105, 5] }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+            }
+        }
+    },
+    {
+        $addFields: {
+            normalized_rating: { $avg: ["$scaled_votes", "$imdb.rating"] }
+        }
+    },
+    {
+        $sort: { normalized_rating: 1 }
+    },
+    { $limit: 1 },
+    { 
+        $project: { title: 1  }
+     }
+], { allowDiskUse: true }).pretty()
 
 
+
+x_max = 1521105
+x_min = 5
+min = 1
+max = 10
+x = imdb.votes
+
+{
+    $add: [
+      1,
+      {
+        $multiply: [
+          9,
+          {
+            $divide: [
+              { $subtract: ["$imdb.votes", 5] },
+              { $subtract: [1521105, 5] }
+            ]
+          }
+        ]
+      }
+    ]
+}
 
 
 
