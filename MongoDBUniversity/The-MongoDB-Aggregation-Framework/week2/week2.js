@@ -151,6 +151,9 @@ db.movies.aggregate([
         }
     },
     {
+        $project: { _id: 0, cast: 1, "imdb.rating": 1 } // keeping only the data necessary for the aggregation stages that follow
+    },
+    {
         $unwind: "$cast"
     },
     {
