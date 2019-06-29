@@ -181,11 +181,41 @@ db.movies.aggregate([
     }
 ])
 
+// The $lookup Stage
+db.air_alliances.aggregate([
+    {
+        $lookup: {
+            from: "air_airlines",
+            localField: "airlines", // Field of air_alliances
+            foreignField: "name",
+            as: "airlines"
+        }
+    }
+]).pretty()
 
-
-
-
-
+// Lab - Using $lookup
+db.air_routes.aggregate([
+    {
+        $match: { airplane: /747|380/ }
+    },
+    {
+        $lookup: {
+            from: "air_alliances",
+            localField: "airline.name",
+            foreignField: "airlines",
+            as: "airlines"
+        }
+    },
+    {
+        $unwind: "$airlines"
+    },
+    {
+        $group: {
+            _id: "$airlines.name",
+            no_of_routes: { $sum: 1 }
+        }
+    }
+]).pretty()
 
 
 
