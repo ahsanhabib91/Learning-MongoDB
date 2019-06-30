@@ -334,7 +334,11 @@ db.movies.aggregate([
         $bucket: {
             groupBy: "$imdb.rating",
             boundaries: [0, 5, 8, Infinity],
-            default: "Other"
+            default: "not rated",
+            output: {
+                average_per_bucket: { $avg: "$imdb.rating" },
+                count: { $sum: 1 }
+            }
         }
     }
 ]).pretty()
