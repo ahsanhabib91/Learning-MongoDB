@@ -218,9 +218,126 @@ db.air_routes.aggregate([
 ]).pretty()
 
 
+// $graphLookup: Simple Lookup
+db.parent_reference.aggregate([
+    {
+        $match: {
+            name: "Eliot"
+        }
+    },
+    {
+        $graphLookup: {
+            from: 'parent_reference',
+            startWith: '$_id',
+            connectFromField: '_id', // from where the value is taken  
+            connectToField: 'reports_to', // To where the value is searched
+            as: 'all_reports'
+        }
+    }
+]).pretty()
+db.parent_reference.aggregate([
+    {
+        $match: {
+            name: "Shannon"
+        }
+    },
+    {
+        $graphLookup: {
+            from: 'parent_reference',
+            startWith: '$reports_to',
+            connectFromField: 'reports_to', // from where the value is taken 
+            connectToField: '_id', // To where the value is searched
+            as: 'bosses'
+        }
+    }
+]).pretty()
+db.child_reference.aggregate([
+    {
+        $match: {
+            name: "Dev"
+        }
+    },
+    {
+        $graphLookup: {
+            from: 'child_reference',
+            startWith: '$direct_reports',
+            connectFromField: 'direct_reports', // from where the value is taken 
+            connectToField: 'name', // To where the value is searched
+            as: 'all_reports'
+        }
+    }
+]).pretty()
+db.child_reference.aggregate([
+    {
+        $match: {
+            name: "Dev"
+        }
+    },
+    {
+        $graphLookup: {
+            from: 'child_reference',
+            startWith: '$direct_reports',
+            connectFromField: 'direct_reports', // from where the value is taken 
+            connectToField: 'name', // To where the value is searched
+            as: 'till_2_level_reports',
+            maxDepth: 0,
+            depthField: 'level' // how far a document is from the source input document("Dev" in this case)
+        }
+    }
+]).pretty()
+db.air_airlines.aggregate([
+    {
+        $match: {
+            name: "TAP Portugal"
+        }
+    },
+    {
+        $graphLookup: {
+            from: 'air_routes',
+            startWith: '$base',
+            connectFromField: 'dst_airport', // from where the value is taken 
+            connectToField: 'src_airport', // To where the value is searched
+            as: 'chain',
+            maxDepth: 1,
+            restrictSearchWithMatch: {
+                'airline.name': 'TAP Portugal'
+            }
+        }
+    }
+]).pretty()
 
 
+// Facets: Single Facet Query
+db.movies.aggregate([
+    {
+        $sortByCount: "$year"
+    }
+]).pretty() // id:1
+// "id:1 === id:2"
+db.movies.aggregate([
+    {
+        $group: {
+            _id: '$year',
+            count: { $sum: 1 }
+        }
+    },
+    {
+        $sort: { 
+            count: -1 
+        }
+    }
+]).pretty() // id:2
 
+// The $bucket Stage
+db.movies.aggregate([
+    {
+        $bucket: {
+            groupBy: "$imdb.rating",
+            boundaries: [0, 5, 8, Infinity],
+            default: "Other"
+        }
+    }
+]).pretty()
 
 
 
